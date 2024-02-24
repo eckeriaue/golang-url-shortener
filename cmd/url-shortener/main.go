@@ -7,6 +7,8 @@ import (
 	config "github.com/eckeriaue/golang-url-shortener/internal"
 	"github.com/eckeriaue/golang-url-shortener/internal/lib/logger/sl"
 	"github.com/eckeriaue/golang-url-shortener/internal/storage/sqlite"
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 )
 
 const (
@@ -28,6 +30,9 @@ func main() {
 		os.Exit(1)
 	}
 	_ = storage
+
+	router := chi.NewRouter()
+	router.Use(middleware.RequestID)
 }
 
 func setupLogger(env string) *slog.Logger {
