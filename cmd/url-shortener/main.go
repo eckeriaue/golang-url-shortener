@@ -5,6 +5,8 @@ import (
 	"os"
 
 	config "github.com/eckeriaue/golang-url-shortener/internal"
+	"github.com/eckeriaue/golang-url-shortener/internal/lib/logger/sl"
+	"github.com/eckeriaue/golang-url-shortener/internal/storage/sqlite"
 )
 
 const (
@@ -20,6 +22,12 @@ func main() {
 	log.Info("starting url-shortener", slog.String("env", cfg.Env))
 	log.Debug("debug logger was enabled")
 
+	storage, err := sqlite.New(cfg.StoragePath)
+	if err != nil {
+		log.Error("failed on init storage", sl.Error(err))
+		os.Exit(1)
+	}
+	_ = storage
 }
 
 func setupLogger(env string) *slog.Logger {
