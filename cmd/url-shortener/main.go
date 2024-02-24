@@ -31,6 +31,8 @@ func main() {
 	}
 	_ = storage
 
+	storage.DeleteUrl("google")
+
 	router := chi.NewRouter()
 	router.Use(middleware.RequestID)
 }
