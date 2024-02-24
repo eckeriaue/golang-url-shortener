@@ -2,6 +2,7 @@ package sqlite
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/eckeriaue/golang-url-shortener/internal/storage"
@@ -65,3 +66,24 @@ func (s *Storage) SaveUrl(urlToSave, alias string) (int64, error) {
 	}
 	return id, nil
 }
+
+func (s *Storage) GetUrl(alias string) (string, error) {
+	const op = "storage.sqlite.GetUrl"
+	stmt, err := s.db.Prepare(`select url from url where alias = ?`)
+	if err != nil {
+		return "", fmt.Errorf("%s: prepare statement %w", op, err)
+	}
+
+	var resultUrl string
+	err = stmt.QueryRow(alias).Scan(&resultUrl)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", storage.ErrUrlNotFound
+		}
+		return "", fmt.Errorf("%s: execute statement %w", op, err)
+	}
+
+	return resultUrl, nil
+}
+
+// todo: func (s *Storage) DeleteUrl(alias string) error
